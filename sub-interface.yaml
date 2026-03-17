@@ -37,7 +37,7 @@
                   <ifm xmlns="urn:huawei:yang:huawei-ifm">
                     <interfaces>
                       <interface>
-                        <name>25GE0/1/40.200</name>
+                        <name>25GE0/1/40</name>
                       </interface>
                     </interfaces>
                   </ifm>
