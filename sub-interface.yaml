@@ -44,11 +44,11 @@
                 </filter>
         register: result
               
-      - name: Show full NETCONF output
+    - name: Show full NETCONF output
       debug:
-        var: result
+      var: result
 
     - name: Show only XML content of interface
       debug:
-        msg: "{{ result.rpc }}"
+      msg: "{{ result.rpc }}"
 
