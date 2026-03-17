@@ -50,5 +50,5 @@
 
     - name: Show only XML content of interface
       debug:
-        msg: "{{ result.stdout }}"
+        msg: "{{ result.stdout_lines }}"
 
