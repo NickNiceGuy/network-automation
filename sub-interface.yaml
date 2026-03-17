@@ -30,7 +30,7 @@
   gather_facts: no
 
   tasks:
-    - name: NETCONF RPC
+    - name: Get running configuration (sub-interface) via NETCONF
       netconf_get:
         filter: |
             <filter xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
@@ -42,4 +42,13 @@
                     </interfaces>
                   </ifm>
                 </filter>
+        register: result
               
+      - name: Show full NETCONF output
+      debug:
+        var: result
+
+    - name: Show only XML content of interface
+      debug:
+        msg: "{{ result.rpc }}"
+
