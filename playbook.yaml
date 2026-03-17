@@ -1,0 +1,28 @@
+# Ansible will need some basic information to make sure
+# it can connect to the target device before attempting
+# a NETCONF message. Ansible will look in the same directory
+# as the playbook file for ansible.cfg.
+#
+# Nearly all parameters in ansible.cfg can be overridden
+# with ansible-playbook command line flags.
+
+
+- name : NETCONF playbook
+  hosts: MY_HOST_NAME
+  connection: netconf
+  gather_facts: no
+
+  tasks:
+    - name: NETCONF RPC
+      netconf_get:
+        filter: |
+            <filter xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+              <ifm xmlns="urn:huawei:yang:huawei-ifm">
+                <interfaces>
+                  <interface>
+                    <name>25GE0/1/40</name>
+                  </interface>
+                </interfaces>
+              </ifm>
+            </filter>
+
