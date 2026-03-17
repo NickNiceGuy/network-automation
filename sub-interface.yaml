@@ -42,7 +42,7 @@
                     </interfaces>
                   </ifm>
                 </filter>
-        register: result
+      register: result
               
     - name: Show full NETCONF output
       debug:
