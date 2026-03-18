@@ -34,7 +34,7 @@
         filter: |
           <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
             <interface>
-              <name>"{{ target_interface }}"</name>
+              <name>{{ target_interface }}</name>
             </interface>
           </interfaces>
       register: result
