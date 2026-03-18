@@ -39,10 +39,6 @@
             </interface>
           </interfaces>
       register: result
-              
-    - name: Show full NETCONF output
-      debug:
-        var: result
 
     - name: Show only XML content of interface
       debug:
