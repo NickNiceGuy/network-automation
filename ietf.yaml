@@ -33,13 +33,11 @@
     - name: Display interface 25GE0/1/40
       netconf_get:
         filter: |
-            <filter xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-              <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-                <interface>
-                  <name>25GE0/1/40</name>
-                </interface>
-              </interfaces>
-            </filter>
+          <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+            <interface>
+              <name>25GE0/1/40</name>
+            </interface>
+          </interfaces>
       register: result
               
     - name: Show full NETCONF output
