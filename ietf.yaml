@@ -24,8 +24,8 @@
 #[MY_HOST_NAME]
 #IP_ADDRESS_HERE
 #
-- name : NETCONF playbook
-  hosts: MY_HOST_NAME
+- name : Playbook per stato interfaccia
+  hosts: {{ host_id }}
   connection: netconf
   gather_facts: no
 
