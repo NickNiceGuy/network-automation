@@ -1,0 +1,44 @@
+# Ansible will need some basic information to make sure
+# it can connect to the target device before attempting
+# a NETCONF message. Ansible will look in the same directory
+# as the playbook file for ansible.cfg.
+#
+# Nearly all parameters in ansible.cfg can be overridden
+# with ansible-playbook command line flags.
+
+# Example of basic ansible.cfg file
+#
+#[defaults]
+#inventory = ./ansible_host
+#host_key_checking = False
+#remote_user = USERNAME_HERE
+
+# Example of basic ansible_host file referred to in
+# ansible.cfg inventory.
+#
+#[all:vars]
+#ansible_connection=netconf
+#ansible_password=PASSWORD_HERE
+#
+#[MY_HOST_NAME]
+#IP_ADDRESS_HERE
+#
+- name : Playbook per stato interfaccia
+  hosts: MY_HOST_NAME
+  connection: netconf
+  gather_facts: no
+
+  tasks:
+    - name: "Display interface {{ target_interface }}"
+      netconf_get:
+        filter: |
+          <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+            <interface>
+              <name>"{{ target_interface }}"</name>
+            </interface>
+          </interfaces>
+      register: result
+
+    - name: Show details for interface "{{ target_interface }}"
+      debug:
+        msg: "{{ result.stdout_lines }}"
