@@ -25,7 +25,7 @@
 #IP_ADDRESS_HERE
 #
 - name : Playbook per stato interfaccia
-  hosts: "{{ host_id }}"
+  hosts: MY_HOST_NAME
   connection: netconf
   gather_facts: no
 
