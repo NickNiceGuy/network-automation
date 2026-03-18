@@ -25,21 +25,21 @@
 #IP_ADDRESS_HERE
 #
 - name : Playbook per stato interfaccia
-  hosts: {{ host_id }}
+  hosts: "{{ host_id }}"
   connection: netconf
   gather_facts: no
 
   tasks:
-    - name: Display interface {{ interface }}
+    - name: Display interface "{{ interface }}"
       netconf_get:
         filter: |
           <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
             <interface>
-              <name>{{ interface }}</name>
+              <name>"{{ interface }}"</name>
             </interface>
           </interfaces>
       register: result
 
-    - name: Show details for {{ interface }}
+    - name: Show details for "{{ interface }}"
       debug:
         msg: "{{ result.stdout_lines }}"
