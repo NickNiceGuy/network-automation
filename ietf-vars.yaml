@@ -39,11 +39,6 @@
           </interfaces>
       register: result
 
-    
-    - name: Debug di tutte le variabili ricevute
-      debug:
-        var: vars
-
     - name: Show details for interface "{{ target_interface }}"
       debug:
         msg: "{{ result.stdout_lines }}"
