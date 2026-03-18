@@ -30,16 +30,16 @@
   gather_facts: no
 
   tasks:
-    - name: Display interface "{{ interface }}"
+    - name: Display interface 25GE0/1/40
       netconf_get:
         filter: |
           <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
             <interface>
-              <name>"{{ interface }}"</name>
+              <name>25GE0/1/40</name>
             </interface>
           </interfaces>
       register: result
 
-    - name: Show details for "{{ interface }}"
+    - name: Show details for interface 25GE0/1/40
       debug:
         msg: "{{ result.stdout_lines }}"
