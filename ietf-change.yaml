@@ -32,7 +32,6 @@
     - name: NETCONF RPC - Set description on 25GE0/1/40.200
       netconf_config:
         xmlns: "http://openconfig.net/yang/interfaces"
-        timeout: 120                    # fix 3: aumenta il timeout a 120s
         xml: |
           <config>
             <interfaces xmlns="http://openconfig.net/yang/interfaces">
