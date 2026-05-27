@@ -24,21 +24,24 @@
 #[MY_HOST_NAME]
 #IP_ADDRESS_HERE
 #
-- name : NETCONF playbook
+- name: NETCONF playbook
   hosts: MY_HOST_NAME
   connection: netconf
   gather_facts: no
-
   tasks:
-    - name: NETCONF RPC
+    - name: NETCONF RPC - Set description on 25GE0/1/40.200
       netconf_config:
+        xmlns: "http://openconfig.net/yang/interfaces"
+        timeout: 120                    # fix 3: aumenta il timeout a 120s
         xml: |
-            <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-              <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-                <interface xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0" nc:operation="replace">
+          <config>
+            <interfaces xmlns="http://openconfig.net/yang/interfaces">
+              <interface>
+                <name>25GE0/1/40.200</name>
+                <config>
                   <name>25GE0/1/40.200</name>
                   <description>TEST da Nicholas</description>
-                </interface>
-              </interfaces>
-            </config>
-
+                </config>
+              </interface>
+            </interfaces>
+          </config>
