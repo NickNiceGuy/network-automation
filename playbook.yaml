@@ -7,11 +7,10 @@
 # with ansible-playbook command line flags.
 
 
-- name : NETCONF playbook
+- name: NETCONF playbook
   hosts: MY_HOST_NAME
   connection: netconf
   gather_facts: no
-
   tasks:
     - name: NETCONF RPC
       netconf_get:
@@ -25,9 +24,7 @@
                 </interfaces>
               </ifm>
             </filter>
-
-       register: result
-
+      register: result
     - name: Show details for interface 25GE0/1/40
       debug:
         msg: "{{ result.stdout_lines }}"
