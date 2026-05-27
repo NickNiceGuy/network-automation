@@ -69,5 +69,10 @@
                     </interfaces>
                   </ifm>
                 </config>
-              
+
+              register: result
+
+    - name: Edit details for sub-interface"
+      debug:
+        msg: "{{ result.stdout_lines }}"
 
