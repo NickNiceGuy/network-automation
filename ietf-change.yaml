@@ -33,13 +33,10 @@
       netconf_config:
         xml: |
           <config>
-            <interfaces xmlns="http://openconfig.net/yang/interfaces">
+            <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
               <interface>
                 <name>25GE0/1/40.200</name>
-                <config>
-                  <name>25GE0/1/40.200</name>
-                  <description>TEST da Nicholas</description>
-                </config>
+                <description>TEST da Nicholas</description>
               </interface>
             </interfaces>
           </config>
