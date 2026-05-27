@@ -31,7 +31,6 @@
   tasks:
     - name: NETCONF RPC - Set description on 25GE0/1/40.200
       netconf_config:
-        timeout: 120
         xml: |
           <config>
             <interfaces xmlns="http://openconfig.net/yang/interfaces">
