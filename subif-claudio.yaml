@@ -24,7 +24,7 @@
 # =====================================================================
 
 - name: Configure L2 sub-interface on NE8000
-  hosts: ne8000
+  hosts: MY_HOST_NAME
   gather_facts: false
   connection: ansible.netcommon.netconf
 
