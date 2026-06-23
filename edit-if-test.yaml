@@ -1,0 +1,66 @@
+
+# Ansible will need some basic information to make sure
+# it can connect to the target device before attempting
+# a NETCONF message. Ansible will look in the same directory
+# as the playbook file for ansible.cfg.
+#
+# Nearly all parameters in ansible.cfg can be overridden
+# with ansible-playbook command line flags.
+
+# Example of basic ansible.cfg file
+#
+#[defaults]
+#inventory = ./ansible_host
+#host_key_checking = False
+#remote_user = USERNAME_HERE
+
+# Example of basic ansible_host file referred to in
+# ansible.cfg inventory.
+#
+#[all:vars]
+#ansible_connection=netconf
+#ansible_password=PASSWORD_HERE
+#
+#[MY_HOST_NAME]
+#IP_ADDRESS_HERE
+#
+- name : NETCONF playbook
+  hosts: MY_HOST_NAME
+  connection: netconf
+  gather_facts: no
+
+  tasks:
+    - name: NETCONF RPC
+      netconf_config:
+        xml: |
+            <config xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+                  <ifm xmlns="urn:huawei:yang:huawei-ifm">
+                    <interfaces>
+                      <interface nc:operation="merge">
+                        <name>25GE0/1/40</name>
+                        <class>main-interface</class>
+                        <type>25GE</type>
+                        <number>0/1/40</number>
+                        <description>test</description>
+                        <admin-status>up</admin-status>
+                        <link-protocol>ethernet</link-protocol>
+                        <router-type>broadcast</router-type>
+                        <clear-ip-df>false</clear-ip-df>
+                        <link-up-down-trap-enable>true</link-up-down-trap-enable>
+                        <statistic-enable>true</statistic-enable>
+                        <statistic-mode>interface-based</statistic-mode>
+                        <mtu>1500</mtu>
+                        <spread-mtu-flag>false</spread-mtu-flag>
+                        <vrf-name>public</vrf-name>
+                        <l2-mode-enable>false</l2-mode-enable>
+                        <bandwidth nc:operation="remove"/>
+                        <bandwidth-kbps nc:operation="remove"/>
+                        <statistic-interval nc:operation="remove"/>
+                        <mac-address nc:operation="remove"/>
+                        <bandwidth-config-effect-service nc:operation="remove"/>
+                      </interface>
+                    </interfaces>
+                  </ifm>
+                </config>
+              
+
