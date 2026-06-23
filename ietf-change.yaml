@@ -26,6 +26,7 @@
 #
 - name: NETCONF playbook
   connection: netconf
+  hosts: MY_HOST_NAME
   gather_facts: no
   tasks:
     - name: NETCONF RPC - Set description on 25GE0/1/40.200
