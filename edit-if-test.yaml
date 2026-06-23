@@ -37,10 +37,10 @@
                   <ifm xmlns="urn:huawei:yang:huawei-ifm">
                     <interfaces>
                       <interface nc:operation="merge">
-                        <name>25GE0/1/40</name>
+                        <name>GigabitEthernet0/1/1</name>
                         <class>main-interface</class>
-                        <type>25GE</type>
-                        <number>0/1/40</number>
+                        <type>GigabitEthernet</type>
+                        <number>0/1/1</number>
                         <description>test</description>
                         <admin-status>up</admin-status>
                         <link-protocol>ethernet</link-protocol>
