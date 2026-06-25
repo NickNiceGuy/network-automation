@@ -36,4 +36,4 @@
   tasks:
     - name: NETCONF RPC - Set description on 25GE0/1/40.200
       ansible.netcommon.netconf_config:
-        content: "{{ lookup('template', 'interface_config.xml') }}"
+        content: "{{ lookup('template', 'templates/interface_config.xml') }}"
