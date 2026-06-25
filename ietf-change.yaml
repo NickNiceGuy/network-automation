@@ -24,16 +24,21 @@
 #[MY_HOST_NAME]
 #IP_ADDRESS_HERE
 #
-- name: NETCONF playbook
-  hosts: all
+- name : NETCONF playbook
+  hosts: MY_HOST_NAME
+  connection: netconf
   gather_facts: no
-  vars:
-    # Forziamo i timeout qui dentro nel play
-    ansible_persistent_connect_timeout: 90
-    ansible_persistent_command_timeout: 90
-    ansible_command_timeout: 90
-    
+
   tasks:
-    - name: NETCONF RPC - Set description on 25GE0/1/40.200
-      ansible.netcommon.netconf_config:
-        content: "{{ lookup('template', 'templates/interface_config.xml') }}"
+    - name: NETCONF RPC
+      netconf_get:
+        filter: |
+            <filter xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+              <ifm xmlns="urn:huawei:yang:huawei-ifm">
+                <interfaces>
+                  <interface>
+                    <name>25GE0/1/40</name>
+                  </interface>
+                </interfaces>
+              </ifm>
+            </filter>
