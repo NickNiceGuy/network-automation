@@ -1,10 +1,8 @@
 <config>
-  <ifm xmlns="urn:huawei:yang:huawei-ifm">
-    <interfaces>
-      <interface>
-        <name>{{ interface_name }}</name>
-        <description>{{ interface_desc }}</description>
-      </interface>
-    </interfaces>
-  </ifm>
+  <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+    <interface>
+      <name>{{ interface_name }}</name>
+      <description>{{ interface_desc }}</description>
+    </interface>
+  </interfaces>
 </config>
