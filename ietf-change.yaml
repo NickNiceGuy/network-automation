@@ -28,11 +28,13 @@
 - name: CLI playbook via SSH standard
   hosts: all
   gather_facts: no
+  vars:
+    interface_name: "25GE0/1/40.200"
+    interface_desc: "Configurato via Semaphore"
 
   tasks:
     - name: Configura descrizione interfaccia su Huawei
-      # Nome completo della collezione per sicurezza
-      ansible_collections.huawei.vrp.plugins.modules.vrp_config:
+      huawei.vrp.vrp_config:
         lines:
           - interface {{ interface_name }}
           - description {{ interface_desc }}
