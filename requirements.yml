@@ -1,3 +1,4 @@
 ---
 collections:
-  - name: huawei.vrp
+  - name: https://github.com/huawei/ansible-vrp.git
+    type: git
