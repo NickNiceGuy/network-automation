@@ -1,0 +1,12 @@
+<config>
+  <ifm xmlns="urn:huawei:yang:huawei-ifm">
+    <interfaces>
+      <interface>
+        <name>{{ interface_name }}</name>
+        <description>{{ interface_desc }}</description>
+        <ipv4Address>{{ ip_address }}</ipv4Address>
+        <subnetMask>{{ subnet_mask }}</subnetMask>
+      </interface>
+    </interfaces>
+  </ifm>
+</config>
