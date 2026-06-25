@@ -31,14 +31,15 @@
 
   tasks:
     - name: NETCONF RPC
-      netconf_get:
-        filter: |
-            <filter xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+      netconf_config:
+        xml: |
+            <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
               <ifm xmlns="urn:huawei:yang:huawei-ifm">
                 <interfaces>
                   <interface>
                     <name>25GE0/1/40</name>
+                    <description>SESESE</description>
                   </interface>
                 </interfaces>
               </ifm>
-            </filter>
+            </config>
