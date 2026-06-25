@@ -31,7 +31,8 @@
 
   tasks:
     - name: Configura descrizione interfaccia su Huawei
-      huawei.vrp.vrp_config:
+      # Nome completo della collezione per sicurezza
+      ansible_collections.huawei.vrp.plugins.modules.vrp_config:
         lines:
           - interface {{ interface_name }}
           - description {{ interface_desc }}
