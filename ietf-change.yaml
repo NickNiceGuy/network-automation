@@ -25,18 +25,15 @@
 #IP_ADDRESS_HERE
 #
 - name: NETCONF playbook
-  connection: netconf
-  hosts: MY_HOST_NAME
+  hosts: all
   gather_facts: no
+  vars:
+    # Forziamo i timeout qui dentro nel play
+    ansible_persistent_connect_timeout: 90
+    ansible_persistent_command_timeout: 90
+    ansible_command_timeout: 90
+    
   tasks:
     - name: NETCONF RPC - Set description on 25GE0/1/40.200
-      netconf_config:
-        xml: |
-          <config>
-            <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-              <interface>
-                <name>25GE0/1/40.200</name>
-                <description>TEST da Nicholas</description>
-              </interface>
-            </interfaces>
-          </config>
+      ansible.netcommon.netconf_config:
+        content: "{{ lookup('template', 'templates/interface_config.xml') }}"
