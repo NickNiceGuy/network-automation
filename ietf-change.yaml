@@ -26,7 +26,7 @@
 #
 ---
 - name: CLI playbook via SSH standard
-  hosts: all
+  hosts: NE8000-F1A
   gather_facts: no
   vars:
     interface_name: "25GE0/1/40.200"
