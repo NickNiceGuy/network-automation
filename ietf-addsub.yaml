@@ -1,26 +1,34 @@
-- name: Playbook per creazione Subinterface via NETCONF RPC CLI
+- name: Playbook per creazione Subinterface via NETCONF RPC
   hosts: NE8000-F1A
   connection: netconf
   gather_facts: no
 
   tasks:
-    - name: Invia comandi CLI tramite canale NETCONF
+    - name: Invia comandi di configurazione CLI tramite NETCONF edit-config
       ansible.netcommon.netconf_rpc:
-        rpc: execute-cli
-        xmlns: "urn:huawei:yang:huawei-cli"
+        rpc: edit-config
         content: |
-          <commands>
-            <command>system-view</command>
-            <command>interface 25GE0/1/42.100</command>
-            <command>description Subint creata da Semaphore UI via RPC</command>
-            <command>dot1q termination vid 100</command>
-            <command>arp broadcast enable</command>
-            <command>commit</command>
-          </commands>
+          <target>
+            <candidate/>
+          </target>
+          <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+            <configuration-text xmlns="http://www.huawei.com/netconf/capability/base/1.0">
+              interface 25GE0/1/42.100
+               description Subint creata da Semaphore UI
+               dot1q termination vid 100
+               arp broadcast enable
+            </configuration-text>
+          </config>
       register: rpc_result
+
+    - name: Applica le modifiche (Commit)
+      ansible.netcommon.netconf_rpc:
+        rpc: commit
+      register: commit_result
 
     - name: Mostra esito operazione
       debug:
-        var: rpc_result
+        msg: "Configurazione inviata e committata con successo!"
+
 
 
