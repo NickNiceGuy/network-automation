@@ -34,7 +34,8 @@
 
   tasks:
     - name: Configura descrizione interfaccia su Huawei
-      huawei.vrp.vrp_config:
-        lines:
+      huawei.vrp.vrp_command:
+        commands:
+          - system-view
           - interface {{ interface_name }}
           - description {{ interface_desc }}
