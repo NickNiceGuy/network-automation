@@ -1,0 +1,38 @@
+- name: Playbook per creazione e descrizione Subinterface
+  hosts: NE8000-F1A
+  connection: netconf
+  gather_facts: no
+
+  tasks:
+    - name: Crea subinterface 25GE0/1/42.100 e imposta descrizione
+      ansible.netcommon.netconf_config:
+        target: candidate
+        content: |
+          <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+            <ifm xmlns="urn:huawei:params:xml:ns:yang:huawei-ifm">
+              <interfaces>
+                <interface>
+                  <!-- Nome della sottointerfaccia -->
+                  <name>25GE0/1/42.100</name>
+                  <!-- Specifica che è una sub-interface di livello 3 -->
+                  <class>sub-interface</class>
+                  <type>25GE</type>
+                  <!-- La tua descrizione -->
+                  <description>Subint creata da Semaphore UI</description>
+                  
+                  <!-- Configurazione del Tagging VLAN (Dot1q) -->
+                  <ethernet xmlns="urn:huawei:params:xml:ns:yang:huawei-ethernet">
+                    <vlan-type-dot1q>
+                      <vlan-id>100</vlan-id>
+                    </vlan-type-dot1q>
+                  </ethernet>
+                  
+                </interface>
+              </interfaces>
+            </ifm>
+          </config>
+      register: subint_result
+
+    - name: Mostra esito creazione
+      debug:
+        var: subint_result
