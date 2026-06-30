@@ -6,15 +6,14 @@
   tasks:
     - name: Modifica descrizione interfaccia 25GE0/1/40
       ansible.netcommon.netconf_config:
-        # 1. Specifichiamo "candidate" come target per i dispositivi Huawei
         target: candidate
-        # 2. Inseriamo il blocco XML di configurazione
-        config: |
+        # Correggiamo il parametro usando 'content' invece di 'config'
+        content: |
           <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
             <ifm xmlns="urn:huawei:params:xml:ns:yang:huawei-ifm">
               <interfaces>
                 <interface>
-                  <name>25GE0/1/42</name>
+                  <name>25GE0/1/40</name>
                   <description>Configurato via Semaphore UI</description>
                 </interface>
               </interfaces>
@@ -22,10 +21,10 @@
           </config>
       register: write_result
 
-    # DEBUG: Mostra se la configurazione è stata inviata correttamente al candidate
     - name: Mostra risultato scrittura
       debug:
         var: write_result
+
 
     - name: Forza il commit adesso
       ansible.netcommon.netconf_config:
