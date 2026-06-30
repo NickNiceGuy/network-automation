@@ -1,0 +1,24 @@
+---
+- name: Gestione e Backup Huawei NetEngine 8000
+  hosts: netengine
+  gather_facts: no
+
+  tasks:
+    - name: Mostra la versione software e l'hardware corrente
+      ansible.netcommon.cli_command:
+        command: display version
+      register: version_output
+
+    - name: Stampa a schermo la versione
+      debug:
+        msg: "{{ version_output.stdout }}"
+
+    - name: Estrai la configurazione corrente (running-config)
+      ansible.netcommon.cli_command:
+        command: display current-configuration
+      register: config_output
+
+    - name: Salva la configurazione localmente sul server Ansible
+      ansible.builtin.copy:
+        content: "{{ config_output.stdout }}"
+        dest: "./backups/{{ inventory_hostname }}_current_config.txt"
