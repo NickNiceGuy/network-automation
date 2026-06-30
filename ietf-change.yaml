@@ -7,10 +7,10 @@
     - name: Modifica descrizione interfaccia 25GE0/1/42
       ansible.netcommon.netconf_config:
         target: candidate
-        # Correggiamo il parametro usando 'content' invece di 'config'
         content: |
           <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-            <ifm xmlns="urn:huawei:params:xml:ns:yang:huawei-ifm">
+            <!-- Corretto il namespace nativo di Huawei (urn:huawei:yang:huawei-ifm) -->
+            <ifm xmlns="urn:huawei:yang:huawei-ifm">
               <interfaces>
                 <interface>
                   <name>25GE0/1/42</name>
@@ -24,6 +24,7 @@
     - name: Mostra risultato scrittura
       debug:
         var: write_result
+
 
 
 
