@@ -24,7 +24,7 @@
 #IP_ADDRESS_HERE
 #
 - name : Playbook per stato interfaccia
-  hosts: all
+  hosts: NE8000-F1A
   connection: netconf
   gather_facts: no
 
