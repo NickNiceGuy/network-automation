@@ -6,7 +6,7 @@
   tasks:
     - name: Invia comandi di configurazione via SSH Raw
       ansible.builtin.shell: |
-        sshpass -p 'Net2026$' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null netconf@10.15.1.2 << 'EOF'
+        sshpass -p 'Net2026$' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null netconf@10.15.12.1 << 'EOF'
         system-view
         interface 25GE0/1/40
         description "Collegamento via Semaphore UI"
