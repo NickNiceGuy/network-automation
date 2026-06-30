@@ -25,17 +25,18 @@
 #IP_ADDRESS_HERE
 #
 ---
-- name: CLI playbook via SSH standard
-  hosts: NE8000-F1A
+- name: CLI playbook via NETCONF
+  hosts: all
   gather_facts: no
-  vars:
-    interface_name: "25GE0/1/40.200"
-    interface_desc: "Configurato via Semaphore"
-
   tasks:
-    - name: Configura descrizione interfaccia su Huawei
-      ansible.netcommon.cli_config:
-        config: |
-          interface {{ interface_name }}
-          description {{ interface_desc }}
-          commit
+    - name: Configura descrizione interfaccia su Huawei via NETCONF
+      ansible.netcommon.netconf_config:
+        xml: |
+          <ifm xmlns="http://huawei.com">
+            <interfaces>
+              <interface>
+                <ifName>{{ interface_name }}</ifName>
+                <ifDescr>{{ interface_desc }}</ifDescr>
+              </interface>
+            </interfaces>
+          </ifm>
