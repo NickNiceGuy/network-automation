@@ -7,13 +7,14 @@
       ansible.netcommon.netconf_config:
         xml: |
           <config>
-            <ifm xmlns="http://huawei.com">
+            <ifm xmlns="urn:huawei:yang:huawei-ifm">
               <interfaces>
                 <interface>
-                  <ifName>GigabitEthernet0/1/0</ifName>
-                  <ifDescr>Collegamento via Semaphore UI</ifDescr>
+                  <name>GigabitEthernet0/1/0</name>
+                  <description>Collegamento via Semaphore UI</description>
                 </interface>
               </interfaces>
             </ifm>
           </config>
+
 
