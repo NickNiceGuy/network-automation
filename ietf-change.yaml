@@ -1,21 +1,26 @@
 ---
-- name: Configurazione Interfaccia via CLI SSH Universale
+- name: Configurazione Interfaccia via NETCONF Raw RPC
   hosts: NE8000-F1A
+  connection: ansible.netcommon.netconf
   gather_facts: no
-  vars:
-    ansible_connection: ansible.netcommon.network_cli
-    ansible_network_os: vrp
 
   tasks:
-    - name: Invia sequenza comandi di configurazione su Huawei
-      ansible.netcommon.cli_command:
-        command: "{{ item }}"
-      loop:
-        - system-view
-        - interface 25GE0/1/40
-        - description "Collegamento via Semaphore UI"
-        - commit
-        - return
+    - name: Applica descrizione interfaccia tramite richiesta RPC nativa
+      ansible.netcommon.netconf_rpc:
+        rpc: edit-config
+        content: |
+          <target>
+            <candidate/>
+          </target>
+          <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+            <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+              <interface xc:operation="merge">
+                <name>25GE0/1/40</name>
+                <description>Collegamento via Semaphore UI</description>
+              </interface>
+            </interfaces>
+          </config>
+
 
 
 
