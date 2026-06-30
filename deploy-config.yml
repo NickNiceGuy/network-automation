@@ -1,0 +1,14 @@
+---
+- name: Distribuzione Configurazione su Huawei NetEngine
+  hosts: netengine
+  gather_facts: no
+
+  tasks:
+    - name: Configura Loopback e Server NTP
+      ansible.netcommon.cli_config:
+        config: |
+          interface Loopback100
+           description Configurata_Via_Ansible
+           ip address 10.255.255.1 255.255.255.255
+           quit
+          ntp-service unicast-server 192.168.10.1
