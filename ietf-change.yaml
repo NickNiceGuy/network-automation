@@ -1,20 +1,22 @@
----
-- name: CLI playbook via NETCONF
-  hosts: all
+- name : Playbook per change IF
+  hosts: NE8000-F1A
+  connection: netconf
   gather_facts: no
+
   tasks:
-    - name: Configura descrizione interfaccia su Huawei via NETCONF
-      ansible.netcommon.netconf_config:
-        xml: |
-          <config>
-            <ifm xmlns="urn:huawei:yang:huawei-ifm">
-              <interfaces>
-                <interface>
-                  <name>GigabitEthernet0/1/0</name>
-                  <description>Collegamento via Semaphore UI</description>
-                </interface>
-              </interfaces>
-            </ifm>
-          </config>
+    - name: Display interface 25GE0/1/40
+      netconf_config:
+        filter: |
+          <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+            <interface>
+              <name>25GE0/1/40</name>
+              <description>Collegamento via Semaphore UI</description>
+            </interface>
+          </interfaces>
+      register: result
+
+    - name: Show details for interface 25GE0/1/40
+      debug:
+        msg: "{{ result.stdout_lines }}"
 
 
