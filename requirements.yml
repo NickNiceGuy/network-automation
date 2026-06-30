@@ -1,0 +1,4 @@
+---
+collections:
+  - name: huawei.vrp
+  - name: ansible.netcommon
