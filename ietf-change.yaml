@@ -8,6 +8,13 @@
       ansible.builtin.shell: |
         sshpass -p 'Net2026$' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -s netconf@10.15.12.1 netconf << 'EOF'
         <?xml version="1.0" encoding="UTF-8"?>
+        <hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+          <capabilities>
+            <capability>urn:ietf:params:netconf:base:1.0</capability>
+          </capabilities>
+        </hello>
+        ]]>]]>
+        <?xml version="1.0" encoding="UTF-8"?>
         <rpc message-id="1" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
           <edit-config>
             <target>
@@ -40,6 +47,7 @@
     - name: Mostra la risposta XML del router
       ansible.builtin.debug:
         var: netconf_output.stdout_lines
+
 
 
 
