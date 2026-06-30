@@ -1,53 +1,37 @@
----
-- name: Bypass Automazione Huawei via NETCONF Stream Nativo
-  hosts: localhost
-  gather_facts: no
+<rpc message-id="102" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <edit-config>
+    <target>
+      <candidate/>
+    </target>
+    <config>
+      <!-- 1. Creazione della sub-interfaccia logica e switch in modalità L2 -->
+      <ifm:ifm xmlns:ifm="http://huawei.com">
+        <ifm:interfaces>
+          <ifm:interface>
+            <ifm:name>GE0/1/0.100</ifm:name>
+            <ifm:class>sub-interface</ifm:class>
+            <ifm:parentName>GE0/1/0</ifm:parentName>
+            <ifm:l2Mode>l2</ifm:l2Mode> 
+          </ifm:interface>
+        </ifm:interfaces>
+      </ifm:ifm>
 
-  tasks:
-    - name: Invia XML edit-config e commit direttamente al sottosistema NETCONF
-      ansible.builtin.shell: |
-        sshpass -p 'Net2026$' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -s netconf@10.15.12.1 netconf << 'EOF'
-        <?xml version="1.0" encoding="UTF-8"?>
-        <hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-          <capabilities>
-            <capability>urn:ietf:params:netconf:base:1.0</capability>
-            <capability>urn:ietf:params:netconf:base:1.1</capability>
-          </capabilities>
-        </hello>
-        ]]>]]>
-        <?xml version="1.0" encoding="UTF-8"?>
-        <rpc message-id="1" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-          <edit-config>
-            <target>
-              <candidate/>
-            </target>
-            <config>
-              <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-                <interface>
-                  <name>25GE0/1/40</name>
-                  <description>Collegamento via Semaphore UI</description>
-                </interface>
-              </interfaces>
-            </config>
-          </edit-config>
-        </rpc>
-        ]]>]]>
-        <?xml version="1.0" encoding="UTF-8"?>
-        <rpc message-id="2" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-          <commit/>
-        </rpc>
-        ]]>]]>
-        <?xml version="1.0" encoding="UTF-8"?>
-        <rpc message-id="3" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-          <close-session/>
-        </rpc>
-        ]]>]]>
-        EOF
-      register: netconf_output
-
-    - name: Mostra la risposta XML del router
-      ansible.builtin.debug:
-        var: netconf_output.stdout_lines
+      <!-- 2. Associazione al Bridge Domain (modello huawei-bd) -->
+      <bd:bd xmlns:bd="http://huawei.com">
+        <bd:instances>
+          <bd:instance>
+            <bd:id>10</bd:id> <!-- ID del Bridge Domain -->
+            <bd:servicePoints>
+              <bd:servicePoint>
+                <bd:interfaceName>GE0/1/0.100</bd:interfaceName>
+              </bd:servicePoint>
+            </bd:servicePoints>
+          </bd:instance>
+        </bd:instances>
+      </bd:bd>
+    </config>
+  </edit-config>
+</rpc>
 
 
 
