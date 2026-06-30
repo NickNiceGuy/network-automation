@@ -5,7 +5,7 @@
 
   tasks:
     - name: Configura Loopback e Server NTP
-      ansible.netcommon.cli_config:
+      ansible.netcommon.netconf_config:
         config: |
           interface Loopback100
            description Configurata_Via_Ansible
