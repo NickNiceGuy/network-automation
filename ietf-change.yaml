@@ -6,7 +6,7 @@
   tasks:
     - name: Display interface 25GE0/1/40
       netconf_config:
-        filter: |
+        config: |
           <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
             <interface>
               <name>25GE0/1/40</name>
