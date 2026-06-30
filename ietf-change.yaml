@@ -1,19 +1,22 @@
 ---
-- name: Configurazione Interfaccia via CLI SSH
+- name: Configurazione Interfaccia via CLI SSH Universale
   hosts: NE8000-F1A
   gather_facts: no
-  # Forziamo Ansible a usare la CLI testuale anziché NETCONF
   vars:
     ansible_connection: ansible.netcommon.network_cli
-    ansible_network_os: huawei.vrp.vrp
+    ansible_network_os: vrp
 
   tasks:
-    - name: Applica configurazione descrizione su Huawei
-      ansible.netcommon.cli_config:
-        config: |
-          interface 25GE0/1/40
-          description Collegamento via Semaphore UI
-          commit
+    - name: Invia sequenza comandi di configurazione su Huawei
+      ansible.netcommon.cli_command:
+        command: "{{ item }}"
+      loop:
+        - system-view
+        - interface 25GE0/1/40
+        - description "Collegamento via Semaphore UI"
+        - commit
+        - return
+
 
 
 
