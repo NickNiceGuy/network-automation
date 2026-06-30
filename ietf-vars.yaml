@@ -24,7 +24,7 @@
 #IP_ADDRESS_HERE
 #
 - name : Playbook per stato interfaccia
-  hosts: MY_HOST_NAME
+  hosts: all
   connection: netconf
   gather_facts: no
 
