@@ -9,30 +9,33 @@
         target: candidate
         content: |
           <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+            <!-- 1. Contenitore principale delle interfacce -->
             <ifm xmlns="urn:huawei:yang:huawei-ifm">
               <interfaces>
                 <interface>
-                  <!-- Crea la risorsa logica della sottointerfaccia -->
                   <name>25GE0/1/42.100</name>
                   <class>sub-interface</class>
                   <description>Subint creata da Semaphore UI</description>
                 </interface>
               </interfaces>
-              
-              <!-- Struttura corretta per legare la VLAN 100 alla subinterface -->
+            </ifm>
+
+            <!-- 2. Contenitore dell'incapsulamento VLAN esterno a ifm -->
+            <vlan-termination xmlns="urn:huawei:yang:huawei-vlan-termination">
               <dot1q-terminations>
                 <dot1q-termination>
                   <name>25GE0/1/42.100</name>
                   <vlan-id>100</vlan-id>
                 </dot1q-termination>
               </dot1q-terminations>
-            </ifm>
+            </vlan-termination>
           </config>
       register: subint_result
 
     - name: Mostra esito creazione
       debug:
         var: subint_result
+
 
 
 
