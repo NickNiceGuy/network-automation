@@ -15,8 +15,4 @@
           </interfaces>
       register: result
 
-    - name: Show details for interface 25GE0/1/40
-      debug:
-        msg: "{{ result.stdout_lines }}"
-
 
