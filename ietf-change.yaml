@@ -27,7 +27,9 @@
       debug:
         var: write_result
 
-
+    - name: Forza il commit adesso
+      ansible.netcommon.netconf_config:
+        commit: true # <--- Applica tutto quello che c'è nel candidate
 
 
 
