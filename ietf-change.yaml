@@ -35,7 +35,7 @@
   tasks:
     - name: Configura descrizione interfaccia su Huawei
       ansible.netcommon.cli_config:
-        config:
-          - system-view
-          - interface {{ interface_name }}
-          - description {{ interface_desc }}
+        config: |
+          interface {{ interface_name }}
+          description {{ interface_desc }}
+          commit
