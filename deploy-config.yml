@@ -1,9 +1,17 @@
-all:
-  hosts:
-    NE8000-F1A:
-      ansible_host: 10.15.12.1
-  vars:
-    ansible_connection: ansible.netcommon.network_cli
-    ansible_network_os: vrp
+---
+- name: Distribuzione Configurazione su Huawei NetEngine
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Configura Loopback e Server NTP
+      ansible.netcommon.cli_config:
+        config: |
+          interface Loopback100
+           description Configurata_Via_Ansible
+           ip address 10.255.255.1 255.255.255.255
+           quit
+          ntp-service unicast-server 192.168.10.1
+
 
 
