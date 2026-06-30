@@ -1,24 +1,46 @@
 ---
-- name: Bypass Automazione Huawei via SSH Nativo
+- name: Bypass Automazione Huawei via NETCONF Stream Nativo
   hosts: localhost
   gather_facts: no
 
   tasks:
-    - name: Invia comandi di configurazione via SSH Raw
+    - name: Invia XML edit-config e commit direttamente al sottosistema NETCONF
       ansible.builtin.shell: |
-        sshpass -p 'Net2026$' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null netconf@10.15.12.1 << 'EOF'
-        system-view
-        interface 25GE0/1/40
-        description "Collegamento via Semaphore UI"
-        commit
-        return
-        quit
+        sshpass -p 'Net2026$' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -s netconf@10.15.12.1 netconf << 'EOF'
+        <?xml version="1.0" encoding="UTF-8"?>
+        <rpc message-id="1" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+          <edit-config>
+            <target>
+              <candidate/>
+            </target>
+            <config>
+              <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+                <interface>
+                  <name>25GE0/1/40</name>
+                  <description>Collegamento via Semaphore UI</description>
+                </interface>
+              </interfaces>
+            </config>
+          </edit-config>
+        </rpc>
+        ]]>]]>
+        <?xml version="1.0" encoding="UTF-8"?>
+        <rpc message-id="2" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+          <commit/>
+        </rpc>
+        ]]>]]>
+        <?xml version="1.0" encoding="UTF-8"?>
+        <rpc message-id="3" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+          <close-session/>
+        </rpc>
+        ]]>]]>
         EOF
-      register: ssh_output
+      register: netconf_output
 
-    - name: Mostra log di risposta del router Huawei
+    - name: Mostra la risposta XML del router
       ansible.builtin.debug:
-        var: ssh_output.stdout_lines
+        var: netconf_output.stdout_lines
+
 
 
 
