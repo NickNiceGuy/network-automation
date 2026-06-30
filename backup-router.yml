@@ -1,24 +1,17 @@
 ---
-- name: Gestione e Backup Huawei NetEngine 8000
+- name: Gestione e Backup Huawei NetEngine 8000 via NETCONF
   hosts: all
   gather_facts: no
 
   tasks:
-    - name: Mostra la versione software e l'hardware corrente
-      ansible.netcommon.cli_command:
-        command: display version
-      register: version_output
+    - name: Recupera la configurazione di sistema (Running Config)
+      ansible.netcommon.netconf_get:
+        source: running
+        display: xml
+      register: netconf_output
 
-    - name: Stampa a schermo la versione
-      debug:
-        msg: "{{ version_output.stdout }}"
-
-    - name: Estrai la configurazione corrente (running-config)
-      ansible.netcommon.cli_command:
-        command: display current-configuration
-      register: config_output
-
-    - name: Salva la configurazione localmente sul server Ansible
+    - name: Salva la configurazione XML ricevuta sul server
       ansible.builtin.copy:
-        content: "{{ config_output.stdout }}"
-        dest: "./backups/{{ inventory_hostname }}_current_config.txt"
+        content: "{{ netconf_output.output }}"
+        dest: "./backups/{{ inventory_hostname }}_netconf_config.xml"
+
