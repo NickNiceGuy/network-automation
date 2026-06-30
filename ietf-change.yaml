@@ -1,25 +1,20 @@
 ---
-- name: Configurazione Interfaccia via NETCONF Raw RPC
+- name: Configurazione Interfaccia via NETCONF CLI-Tunnel
   hosts: NE8000-F1A
   connection: ansible.netcommon.netconf
   gather_facts: no
 
   tasks:
-    - name: Applica descrizione interfaccia tramite richiesta RPC nativa
+    - name: Invia comandi di configurazione tramite tunnel RPC
       ansible.netcommon.netconf_rpc:
-        rpc: edit-config
+        rpc: execute-cli
+        xmlns: "urn:huawei:yang:huawei-cli"
         content: |
-          <target>
-            <candidate/>
-          </target>
-          <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
-            <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-              <interface xc:operation="merge">
-                <name>25GE0/1/40</name>
-                <description>Collegamento via Semaphore UI</description>
-              </interface>
-            </interfaces>
-          </config>
+          <command>system-view</command>
+          <command>interface 25GE0/1/40</command>
+          <command>description Collegamento via Semaphore UI</command>
+          <command>commit</command>
+
 
 
 
