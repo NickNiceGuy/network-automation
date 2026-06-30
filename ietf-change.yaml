@@ -1,25 +1,25 @@
 ---
-- name: Configurazione Interfaccia via NETCONF Raw RPC
-  hosts: NE8000-F1A
-  connection: ansible.netcommon.netconf
+- name: Bypass Automazione Huawei via SSH Nativo
+  hosts: localhost
   gather_facts: no
 
   tasks:
-    - name: Applica configurazione tramite blocco XML pulito
-      ansible.netcommon.netconf_rpc:
-        rpc: edit-config
-        content: |
-          <target>
-            <candidate/>
-          </target>
-          <config>
-            <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-              <interface>
-                <name>25GE0/1/40</name>
-                <description>Collegamento via Semaphore UI</description>
-              </interface>
-            </interfaces>
-          </config>
+    - name: Invia comandi di configurazione via SSH Raw
+      ansible.builtin.shell: |
+        sshpass -p 'Net2026$' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null netconf@10.15.1.2 << 'EOF'
+        system-view
+        interface 25GE0/1/40
+        description "Collegamento via Semaphore UI"
+        commit
+        return
+        quit
+        EOF
+      register: ssh_output
+
+    - name: Mostra log di risposta del router Huawei
+      ansible.builtin.debug:
+        var: ssh_output.stdout_lines
+
 
 
 
