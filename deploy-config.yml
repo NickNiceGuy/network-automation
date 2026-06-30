@@ -1,27 +1,9 @@
----
-- name: Distribuzione Configurazione su Huawei NetEngine
-  hosts: all
-  gather_facts: no
+all:
+  hosts:
+    NE8000-F1A:
+      ansible_host: 10.15.12.1
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+    ansible_network_os: vrp
 
-  tasks:
-    - name: Configura Loopback e Server NTP via NETCONF
-      ansible.netcommon.netconf_config:
-        content: |
-          <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-            <ifm xmlns="urn:huawei:yang:huawei-ifm">
-              <interfaces>
-                <interface>
-                  <name>Loopback100</name>
-                  <description>Configurata_Via_Ansible</description>
-                </interface>
-              </interfaces>
-            </ifm>
-            <ntp xmlns="urn:huawei:yang:huawei-ntp">
-              <unicast-servers>
-                <unicast-server>
-                  <peer-address>192.168.10.1</peer-address>
-                </unicast-server>
-              </unicast-servers>
-            </ntp>
-          </config>
 
