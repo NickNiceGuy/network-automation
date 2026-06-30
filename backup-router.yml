@@ -1,6 +1,6 @@
 ---
 - name: Gestione e Backup Huawei NetEngine 8000
-  hosts: netengine
+  hosts: all
   gather_facts: no
 
   tasks:
