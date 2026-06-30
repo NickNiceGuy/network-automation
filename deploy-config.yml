@@ -4,14 +4,35 @@
   gather_facts: no
 
   tasks:
-    - name: Configura Loopback e Server NTP
-      ansible.netcommon.cli_config:
-        config: |
-          interface Loopback100
-           description Configurata_Via_Ansible
-           ip address 10.255.255.1 255.255.255.255
-           quit
-          ntp-service unicast-server 192.168.10.1
+    - name: Configura Loopback via NETCONF
+      ansible.netcommon.netconf_config:
+        content: |
+          <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+            <ifm xmlns="urn:huawei:yang:huawei-ifm">
+              <interfaces>
+                <interface>
+                  <name>Loopback100</name>
+                  <description>Configurata_Via_Ansible_NETCONF</description>
+                </interface>
+              </interfaces>
+            </ifm>
+            <if-ip xmlns="urn:huawei:yang:huawei-if-ip">
+              <interfaces>
+                <interface>
+                  <name>Loopback100</name>
+                  <ipv4>
+                    <addresses>
+                      <address>
+                        <ip>10.255.255.1</ip>
+                        <mask>255.255.255.255</mask>
+                      </address>
+                    </addresses>
+                  </ipv4>
+                </interface>
+              </interfaces>
+            </if-ip>
+          </config>
+
 
 
 
