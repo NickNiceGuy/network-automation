@@ -1,18 +1,26 @@
-- name : Playbook per change IF
+- name: Playbook per modificare interfaccia Huawei
   hosts: NE8000-F1A
-  connection: netconf
+  connection: ansible.netcommon.netconf
   gather_facts: no
 
   tasks:
-    - name: Display interface 25GE0/1/40
-      netconf_config:
-        config: |
-          <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-            <interface>
-              <name>25GE0/1/40</name>
-              <description>Collegamento via Semaphore UI</description>
-            </interface>
-          </interfaces>
-      register: result
+    - name: Applica configurazione su interfaccia 25GE0/1/40 via RPC
+      ansible.netcommon.netconf_rpc:
+        rpc: edit-config
+        content: |
+          <target>
+            <candidate/>
+          </target>
+          <config>
+            <ifm xmlns="urn:huawei:yang:huawei-ifm">
+              <interfaces>
+                <interface>
+                  <name>25GE0/1/40</name>
+                  <description>Backbone 25G gestito via Semaphore</description>
+                </interface>
+              </interfaces>
+            </ifm>
+          </config>
+
 
 
