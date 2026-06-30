@@ -1,34 +1,20 @@
-- name: Playbook per creazione Subinterface via NETCONF RPC
-  hosts: NE8000-F1A
-  connection: netconf
-  gather_facts: no
-
-  tasks:
-    - name: Invia comandi di configurazione CLI tramite NETCONF edit-config
-      ansible.netcommon.netconf_rpc:
-        rpc: edit-config
-        content: |
-          <target>
-            <candidate/>
-          </target>
-          <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-            <configuration-text xmlns="http://www.huawei.com/netconf/capability/base/1.0">
-              interface 25GE0/1/42.100
-               description Subint creata da Semaphore UI
-               dot1q termination vid 100
-               arp broadcast enable
-            </configuration-text>
-          </config>
-      register: rpc_result
-
-    - name: Applica le modifiche (Commit)
-      ansible.netcommon.netconf_rpc:
-        rpc: commit
-      register: commit_result
-
-    - name: Mostra esito operazione
-      debug:
-        msg: "Configurazione inviata e committata con successo!"
+5:18:40 PM
+PLAY [Playbook per creazione Subinterface via NETCONF RPC] *********************
+5:18:40 PM
+5:18:40 PM
+TASK [Invia comandi di configurazione CLI tramite NETCONF edit-config] *********
+5:18:41 PM
+fatal: [NE8000-F1A]: FAILED! => {"changed": false, "msg": "b'xmlns has invalid namespace: .'"}
+5:18:41 PM
+5:18:41 PM
+PLAY RECAP *********************************************************************
+5:18:41 PM
+NE8000-F1A                 : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+5:18:41 PM
+5:18:41 PM
+Unable to launch the application. Please contact your system administrator for assistance.
+5:18:43 PM
+Failed to run task: task failed
 
 
 
