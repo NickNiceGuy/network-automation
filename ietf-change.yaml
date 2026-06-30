@@ -14,7 +14,7 @@
             <ifm xmlns="urn:huawei:params:xml:ns:yang:huawei-ifm">
               <interfaces>
                 <interface>
-                  <name>25GE0/1/40</name>
+                  <name>25GE0/1/42</name>
                   <description>Configurato via Semaphore UI</description>
                 </interface>
               </interfaces>
