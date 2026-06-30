@@ -1,34 +1,39 @@
-- name: Playbook per creazione Subinterface via NETCONF RPC
+- name: Playbook per creazione e descrizione Subinterface via NETCONF
   hosts: NE8000-F1A
   connection: netconf
   gather_facts: no
 
   tasks:
-    - name: Invia comandi di configurazione CLI tramite NETCONF edit-config
-      ansible.netcommon.netconf_rpc:
-        rpc: edit-config
+    - name: Crea subinterface 25GE0/1/42.100, descrizione e VLAN
+      ansible.netcommon.netconf_config:
+        target: candidate
         content: |
-          <target>
-            <candidate/>
-          </target>
           <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-            <configuration-text xmlns="http://www.huawei.com/netconf/capability/base/1.0">
-              interface 25GE0/1/42.100
-               description Subint creata da Semaphore UI
-               dot1q termination vid 100
-               arp broadcast enable
-            </configuration-text>
+            <ifm xmlns="urn:huawei:yang:huawei-ifm">
+              <interfaces>
+                <interface>
+                  <!-- Crea la risorsa logica della sottointerfaccia -->
+                  <name>25GE0/1/42.100</name>
+                  <class>sub-interface</class>
+                  <description>Subint creata da Semaphore UI</description>
+                </interface>
+              </interfaces>
+              
+              <!-- Struttura corretta per legare la VLAN 100 alla subinterface -->
+              <dot1q-terminations>
+                <dot1q-termination>
+                  <name>25GE0/1/42.100</name>
+                  <vlan-id>100</vlan-id>
+                </dot1q-termination>
+              </dot1q-terminations>
+            </ifm>
           </config>
-      register: rpc_result
+      register: subint_result
 
-    - name: Applica le modifiche (Commit)
-      ansible.netcommon.netconf_rpc:
-        rpc: commit
-      register: commit_result
-
-    - name: Mostra esito operazione
+    - name: Mostra esito creazione
       debug:
-        msg: "Configurazione inviata e committata con successo!"
+        var: subint_result
+
 
 
 
