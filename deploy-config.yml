@@ -1,6 +1,6 @@
 ---
 - name: Distribuzione Configurazione su Huawei NetEngine
-  hosts: netengine
+  hosts: all
   gather_facts: no
 
   tasks:
