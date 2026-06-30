@@ -4,8 +4,14 @@
   gather_facts: no
 
   tasks:
-    - name: Configura Loopback via NETCONF
+    - name: Configura Loopback via NETCONF con credenziali integrate
       ansible.netcommon.netconf_config:
+        # Forzatura hardcoded dei parametri di connessione NETCONF
+        host: "{{ ansible_host | default('10.15.12.1') }}"
+        port: 830
+        username: netconf
+        password: NetAutomation2026
+        look_for_keys: no
         content: |
           <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
             <ifm xmlns="urn:huawei:yang:huawei-ifm">
@@ -32,6 +38,7 @@
               </interfaces>
             </if-ip>
           </config>
+
 
 
 
