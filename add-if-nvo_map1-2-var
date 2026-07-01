@@ -7,7 +7,7 @@
     ansible_connect_timeout: 180
 
   tasks:
-    - name: Configura subinterface L2 con Dot1q, Flow Action 1-2 e BD
+    - name: Configura subinterface L2 con Dot1q, Flow Action 1-2, Statistiche e BD
       ansible.netcommon.netconf_config:
         target: candidate
         content: |
@@ -20,11 +20,9 @@
                   <parent-name>{{ p_interface }}</parent-name>
                   <description>{{ p_nvo_name }}-NVO ({{ p_username }})</description>
                   <l2-mode-enable>true</l2-mode-enable>
-
-                  <statistics>
-                    <statistic-enable>true</statistic-enable>
-                  </statistics>
-
+                  
+                  <statistic-enable>true</statistic-enable>
+                  
                   <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
                     <l2-sub-interface>
                       <dot1q>
