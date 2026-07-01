@@ -2,20 +2,25 @@
   hosts: NE8000-F1A
   connection: netconf
   gather_facts: no
+  vars:
+    # Aumentiamo il timeout della connessione e del comando NETCONF
+    ansible_netconf_ssh_config: null
+    ansible_command_timeout: 60
+    ansible_connect_timeout: 60
 
   tasks:
-    - name: Crea subinterface 25GE0/1/42.100, descrizione e VLAN (RPC Certificato)
+    - name: Crea subinterface 25GE0/1/43.100, descrizione e VLAN
       ansible.netcommon.netconf_config:
         target: candidate
         content: |
           <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-            
             <ifm xmlns="urn:huawei:yang:huawei-ifm">
               <interfaces>
                 <interface>
-                  <name>25GE0/1/42.100</name>
+                  <name>25GE0/1/43.100</name>
+                  <parent-name>25GE0/1/43</parent-name>
+                  <type>25GE</type>
                   <description>Subint creata da Semaphore UI</description>
-                  
                   <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
                     <l3-sub-interface>
                       <dot1q-termination>
@@ -28,11 +33,9 @@
                       </dot1q-termination>
                     </l3-sub-interface>
                   </ethernet>
-
                 </interface>
               </interfaces>
             </ifm>
-
           </config>
       register: subint_result
 
