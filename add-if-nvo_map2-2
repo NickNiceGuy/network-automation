@@ -19,31 +19,21 @@
                   <name>GigabitEthernet0/1/6.27702448</name>
                   <parent-name>GigabitEthernet0/1/6</parent-name>
                   <description>FIBERLOOP-NVO (ac17824888941)</description>
-                </interface>
-              </interfaces>
-            </ifm>
-
-            <ifm xmlns="urn:huawei:yang:huawei-ifm">
-              <interfaces>
-                <interface>
-                  <name>GigabitEthernet0/1/6.27702448</name>
+                  <l2-mode-enable>true</l2-mode-enable>
+                  
                   <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
                     <l2-sub-interface>
-                      <flow-statistic-enable>true</flow-statistic-enable>
-                      
-                      <encapsulation>qinq</encapsulation>
-
-                      <vlan-mappings>
-                        <vlan-mapping>
-                          <vlan-id>499</vlan-id>
-                          <ce-vlan-id>2448</ce-vlan-id>
-                          
-                          <map-vlan-id>2770</map-vlan-id>
-                          <map-ce-vlan-id>2448</map-ce-vlan-id>
-                        </vlan-mapping>
-                      </vlan-mappings>
+                      <qinqs>
+                        <qinq-vids>
+                          <qinq-vid>
+                            <pe-vlan-id>499</pe-vlan-id>
+                            <ce-vlan-list>2448</ce-vlan-list>
+                          </qinq-vid>
+                        </qinq-vids>
+                      </qinqs>
                     </l2-sub-interface>
                   </ethernet>
+
                 </interface>
               </interfaces>
             </ifm>
