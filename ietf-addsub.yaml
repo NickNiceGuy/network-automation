@@ -10,19 +10,18 @@
         content: |
           <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
             
-            <!-- 1. Creiamo la subinterface logica e la descrizione (Modulo IFM) -->
             <ifm xmlns="urn:huawei:yang:huawei-ifm">
               <interfaces>
                 <interface>
                   <name>25GE0/1/42.100</name>
-                  <class>sub-interface</class>
+                  <parent-name>25GE0/1/42</parent-name>
+                  <type>Sub-Interface</type>
                   <description>Subint creata da Semaphore UI</description>
                 </interface>
               </interfaces>
             </ifm>
 
-            <!-- 2. Associano il tag VLAN 100 alla subinterface (Modulo IP-VLAN-TERMINATION) -->
-            <ip-vlan-termination xmlns="urn:huawei:yang:huawei-ip-vlan-termination">
+            <vlan-termination xmlns="urn:huawei:yang:huawei-vlan-termination">
               <dot1q-terminations>
                 <dot1q-termination>
                   <if-name>25GE0/1/42.100</if-name>
@@ -33,7 +32,7 @@
                   </vlans>
                 </dot1q-termination>
               </dot1q-terminations>
-            </ip-vlan-termination>
+            </vlan-termination>
 
           </config>
       register: subint_result
