@@ -7,7 +7,7 @@
     ansible_connect_timeout: 180
 
   tasks:
-    - name: Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche su Main e BD
+    - name: Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche e BD
       ansible.netcommon.netconf_config:
         target: candidate
         content: |
@@ -15,25 +15,13 @@
             
             <ifm xmlns="urn:huawei:yang:huawei-ifm">
               <interfaces>
-                
-                <interface>
-                  <name>{{ p_interface }}</name>
-                  <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
-                    <main-interface>
-                      <l2-attribute>
-                        <statistics-enable-vlans>
-                          <vlans>{{ p_nvo_s_vlan }}</vlans>
-                        </statistics-enable-vlans>
-                      </l2-attribute>
-                    </main-interface>
-                  </ethernet>
-                </interface>
-
                 <interface>
                   <name>{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}</name>
                   <parent-name>{{ p_interface }}</parent-name>
                   <description>{{ p_nvo_name }}-NVO ({{ p_username }})</description>
                   <l2-mode-enable>true</l2-mode-enable>
+                  
+                  <statistic-enable>true</statistic-enable>
                   
                   <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
                     <l2-sub-interface>
@@ -53,8 +41,8 @@
                       </flow-action>
                     </l2-sub-interface>
                   </ethernet>
-                </interface>
 
+                </interface>
               </interfaces>
             </ifm>
 
