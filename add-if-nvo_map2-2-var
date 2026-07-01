@@ -31,6 +31,15 @@
                           </qinq-vid>
                         </qinq-vids>
                       </qinqs>
+
+                      <vlan-mappings>
+                        <vlan-mapping>
+                          <vlan-id>{{ p_svlan }}</vlan-id>
+                          <ce-vlan-id>{{ p_cvlan }}</ce-vlan-id>
+                          <map-vlan-id>{{ p_nvo_s_vlan }}</map-vlan-id>
+                          <map-ce-vlan-id>{{ p_nvo_c_vlan }}</map-ce-vlan-id>
+                        </vlan-mapping>
+                      </vlan-mappings>
                     </l2-sub-interface>
                   </ethernet>
 
@@ -53,7 +62,3 @@
 
           </config>
       register: l2_subint_result
-
-    - name: Mostra esito
-      debug:
-        var: l2_subint_result
