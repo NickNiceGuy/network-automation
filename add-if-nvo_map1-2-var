@@ -23,13 +23,11 @@
                   
                   <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
                     <l2-sub-interface>
-                      <dot1qs>
-                        <dot1q-vids>
-                          <dot1q-vid>
-                            <vlan-id>{{ p_cvlan }}</vlan-id>
-                          </dot1q-vid>
-                        </dot1q-vids>
-                      </dot1qs>
+                      <dot1q>
+                        <vlans>
+                          <vlan-list>{{ p_cvlan }}</vlan-list>
+                        </vlans>
+                      </dot1q>
                       
                       <flow-action>
                         <action-type>map-1-to-2</action-type>
