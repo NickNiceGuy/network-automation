@@ -34,7 +34,7 @@
                       <flow-action>
                         <action-type>map-1-to-2</action-type>
                         <out-vlan-id>{{ p_nvo_s_vlan }}</out-vlan-id>
-                        <out-ce-vlan-id>{{ p_nvo_c_vlan }}</out-ce-vlan-id>
+                        <inner-vlan-id>{{ p_nvo_c_vlan }}</inner-vlan-id>
                       </flow-action>
                     </l2-sub-interface>
                   </ethernet>
