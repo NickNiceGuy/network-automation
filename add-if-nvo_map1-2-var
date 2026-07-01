@@ -1,4 +1,4 @@
-- name: Playbook per creazione Subinterface L2 Dot1q e Mapping 1-to-2
+- name: Playbook per creazione Subinterface L2 Dot1q e associazione BD
   hosts: NE8000-F1A
   connection: netconf
   gather_facts: no
@@ -7,7 +7,7 @@
     ansible_connect_timeout: 180
 
   tasks:
-    - name: Configura subinterface L2 con Dot1q Mapping 1-2 e BD
+    - name: Configura subinterface L2 con Dot1q, Flow Action 1-2 e BD
       ansible.netcommon.netconf_config:
         target: candidate
         content: |
@@ -30,14 +30,10 @@
                           </dot1q-vid>
                         </dot1q-vids>
                       </dot1qs>
-
-                      <vlan-mappings>
-                        <vlan-mapping>
-                          <vlan-id>{{ p_cvlan }}</vlan-id>
-                          <map-vlan-id>{{ p_nvo_s_vlan }}</map-vlan-id>
-                          <map-ce-vlan-id>{{ p_nvo_c_vlan }}</map-ce-vlan-id>
-                        </vlan-mapping>
-                      </vlan-mappings>
+                      
+                      <flow-action>
+                        <action-type>map-1-to-2</action-type>
+                      </flow-action>
                     </l2-sub-interface>
                   </ethernet>
 
@@ -60,3 +56,7 @@
 
           </config>
       register: l2_subint_result
+
+    - name: Mostra esito
+      debug:
+        var: l2_subint_result
