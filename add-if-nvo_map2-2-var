@@ -20,7 +20,11 @@
                   <parent-name>{{ p_interface }}</parent-name>
                   <description>{{ p_nvo_name }}-NVO ({{ p_username }})</description>
                   <l2-mode-enable>true</l2-mode-enable>
-                  
+
+                  <statistics>
+                    <statistic-enable>true</statistic-enable>
+                  </statistics>
+
                   <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
                     <l2-sub-interface>
                       <qinqs>
