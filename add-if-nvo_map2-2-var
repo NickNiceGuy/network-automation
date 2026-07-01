@@ -7,7 +7,7 @@
     ansible_connect_timeout: 180
 
   tasks:
-    - name: Configura subinterface L2 con QinQ Mapping 2-2 e BD
+    - name: Configura subinterface L2 con QinQ, Flow Action 2-2 e BD
       ansible.netcommon.netconf_config:
         target: candidate
         content: |
@@ -31,15 +31,10 @@
                           </qinq-vid>
                         </qinq-vids>
                       </qinqs>
-
-                      <vlan-mappings>
-                        <vlan-mapping>
-                          <vlan-id>{{ p_svlan }}</vlan-id>
-                          <ce-vlan-id>{{ p_cvlan }}</ce-vlan-id>
-                          <map-vlan-id>{{ p_nvo_s_vlan }}</map-vlan-id>
-                          <map-ce-vlan-id>{{ p_nvo_c_vlan }}</map-ce-vlan-id>
-                        </vlan-mapping>
-                      </vlan-mappings>
+                      
+                      <flow-action>
+                        <action-type>map-2-to-2</action-type>
+                      </flow-action>
                     </l2-sub-interface>
                   </ethernet>
 
@@ -62,3 +57,7 @@
 
           </config>
       register: l2_subint_result
+
+    - name: Mostra esito
+      debug:
+        var: l2_subint_result
