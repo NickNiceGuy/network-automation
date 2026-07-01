@@ -4,7 +4,7 @@
   gather_facts: no
 
   tasks:
-    - name: Crea subinterface 25GE0/1/42.100, descrizione e VLAN
+    - name: Crea subinterface 25GE0/1/42.100, descrizione e VLAN (RPC Certificato)
       ansible.netcommon.netconf_config:
         target: candidate
         content: |
@@ -14,25 +14,24 @@
               <interfaces>
                 <interface>
                   <name>25GE0/1/42.100</name>
-                  <parent-name>25GE0/1/42</parent-name>
-                  <type>Sub-Interface</type>
                   <description>Subint creata da Semaphore UI</description>
+                  
+                  <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
+                    <l3-sub-interface>
+                      <dot1q-termination>
+                        <tag>none</tag>
+                        <dot1q-vlans>
+                          <dot1q-vlans>
+                            <vlan-list>100</vlan-list>
+                          </dot1q-vlans>
+                        </dot1q-vlans>
+                      </dot1q-termination>
+                    </l3-sub-interface>
+                  </ethernet>
+
                 </interface>
               </interfaces>
             </ifm>
-
-            <vlan-termination xmlns="urn:huawei:yang:huawei-vlan-termination">
-              <dot1q-terminations>
-                <dot1q-termination>
-                  <if-name>25GE0/1/42.100</if-name>
-                  <vlans>
-                    <vlan>
-                      <vlan-id>100</vlan-id>
-                    </vlan>
-                  </vlans>
-                </dot1q-termination>
-              </dot1q-terminations>
-            </vlan-termination>
 
           </config>
       register: subint_result
