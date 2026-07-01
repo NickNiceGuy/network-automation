@@ -20,11 +20,7 @@
                   <parent-name>{{ p_interface }}</parent-name>
                   <description>{{ p_nvo_name }}-NVO ({{ p_username }})</description>
                   <l2-mode-enable>true</l2-mode-enable>
-
-                  <statistics>
-                    <statistic-enable>true</statistic-enable>
-                  </statistics>
-
+                  
                   <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
                     <l2-sub-interface>
                       <qinqs>
@@ -41,6 +37,8 @@
                         <out-vlan-id>{{ p_nvo_s_vlan }}</out-vlan-id>
                         <inner-vlan-id>{{ p_nvo_c_vlan }}</inner-vlan-id>
                       </flow-action>
+
+                      <flow-statistic-enable>true</flow-statistic-enable>
                     </l2-sub-interface>
                   </ethernet>
 
