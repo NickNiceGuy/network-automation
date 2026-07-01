@@ -1,0 +1,59 @@
+- name: Playbook per creazione Subinterface L2 QinQ e associazione BD
+  hosts: NE8000-F1A
+  connection: netconf
+  gather_facts: no
+  vars:
+    ansible_command_timeout: 180
+    ansible_connect_timeout: 180
+
+  tasks:
+    - name: Configura subinterface L2 con QinQ Mapping 2-2 e BD
+      ansible.netcommon.netconf_config:
+        target: candidate
+        content: |
+          <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+            
+            <ifm xmlns="urn:huawei:yang:huawei-ifm">
+              <interfaces>
+                <interface>
+                  <name>{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}</name>
+                  <parent-name>{{ p_interface }}</parent-name>
+                  <description>{{ p_nvo_name }}-NVO ({{ p_username }})</description>
+                  <l2-mode-enable>true</l2-mode-enable>
+                  
+                  <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
+                    <l2-sub-interface>
+                      <qinqs>
+                        <qinq-vids>
+                          <qinq-vid>
+                            <pe-vlan-id>{{ p_svlan }}</pe-vlan-id>
+                            <ce-vlan-list>{{ p_cvlan }}</ce-vlan-list>
+                          </qinq-vid>
+                        </qinq-vids>
+                      </qinqs>
+                    </l2-sub-interface>
+                  </ethernet>
+
+                </interface>
+              </interfaces>
+            </ifm>
+
+            <bd xmlns="urn:huawei:yang:huawei-bd">
+              <instances>
+                <instance>
+                  <id>{{ p_bridge }}</id>
+                  <service-points>
+                    <service-point>
+                      <interface-name>{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}</interface-name>
+                    </service-point>
+                  </service-points>
+                </instance>
+              </instances>
+            </bd>
+
+          </config>
+      register: l2_subint_result
+
+    - name: Mostra esito
+      debug:
+        var: l2_subint_result
