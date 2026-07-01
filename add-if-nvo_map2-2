@@ -1,0 +1,71 @@
+- name: Playbook per creazione Subinterface L2 QinQ e associazione BD
+  hosts: NE8000-F1A
+  connection: netconf
+  gather_facts: no
+  vars:
+    # Timeout per prevenire blocchi di sessione durante l'allocazione delle risorse L2
+    ansible_command_timeout: 60
+    ansible_connect_timeout: 60
+
+  tasks:
+    - name: Configura subinterface GE0/1/6.27702448 L2 con QinQ Mapping 2-2 e BD
+      ansible.netcommon.netconf_config:
+        target: candidate
+        content: |
+          <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+            
+            <ifm xmlns="urn:huawei:yang:huawei-ifm">
+              <interfaces>
+                <interface>
+                  <name>GigabitEthernet0/1/6.27702448</name>
+                  <parent-name>GigabitEthernet0/1/6</parent-name>
+                  <type>GE</type>
+                  <description>FIBERLOOP-NVO (ac17824888941)</description>
+                </interface>
+              </interfaces>
+            </ifm>
+
+            <ifm xmlns="urn:huawei:yang:huawei-ifm">
+              <interfaces>
+                <interface>
+                  <name>GigabitEthernet0/1/6.27702448</name>
+                  <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
+                    <l2-sub-interface>
+                      <flow-statistic-enable>true</flow-statistic-enable>
+                      
+                      <encapsulation>qinq</encapsulation>
+
+                      <vlan-mappings>
+                        <vlan-mapping>
+                          <vlan-id>499</vlan-id>
+                          <ce-vlan-id>2448</ce-vlan-id>
+                          
+                          <map-vlan-id>2770</map-vlan-id>
+                          <map-ce-vlan-id>2448</map-ce-vlan-id>
+                        </vlan-mapping>
+                      </vlan-mappings>
+                    </l2-sub-interface>
+                  </ethernet>
+                </interface>
+              </interfaces>
+            </ifm>
+
+            <bd xmlns="urn:huawei:yang:huawei-bd">
+              <instances>
+                <instance>
+                  <id>2111115</id>
+                  <service-points>
+                    <service-point>
+                      <interface-name>GigabitEthernet0/1/6.27702448</interface-name>
+                    </service-point>
+                  </service-points>
+                </instance>
+              </instances>
+            </bd>
+
+          </config>
+      register: l2_subint_result
+
+    - name: Mostra esito
+      debug:
+        var: l2_subint_result
