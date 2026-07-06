@@ -3,8 +3,10 @@
   connection: netconf
   gather_facts: no
   vars:
-    ansible_command_timeout: 180
-    ansible_connect_timeout: 180
+    ansible_command_timeout: 30
+    ansible_connect_timeout: 30
+    ansible_netconf_persistent_connect_timeout: 5
+    ansible_netconf_ssh_config: false
 
   tasks:
     - name: Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche e BD
