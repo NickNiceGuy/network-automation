@@ -3,17 +3,39 @@
   connection: netconf
   gather_facts: no
   vars:
-    ansible_command_timeout: 90
-    ansible_connect_timeout: 90
+    ansible_command_timeout: 30
+    ansible_connect_timeout: 30
     ansible_netconf_persistent_connect_timeout: 5
+    ansible_netconf_ssh_config: false
 
   tasks:
-    - name: Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche e BD
+    - name: 1. Controlla se la sottointerfaccia esiste già sul router
+      ansible.netcommon.netconf_get:
+        source: running
+        filter: |
+          <ifm xmlns="urn:huawei:yang:huawei-ifm">
+            <interfaces>
+              <interface>
+                <name>{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}</name>
+              </interface>
+            </interfaces>
+          </ifm>
+      register: check_interface
+
+    - name: 2. Blocca l'esecuzione se l'interfaccia è già presente
+      fail:
+        msg: "ERRORE DI SICUREZZA: La sottointerfaccia {{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }} esiste già sul router! Nessuna modifica applicata."
+      when: 
+        - check_interface.output is defined
+        - "('<name>' + p_interface + '.' + p_nvo_s_vlan + p_nvo_c_vlan + '</name>') in check_interface.output"
+
+    - name: 3. Configura subinterface L2 (Solo se NON esiste)
       ansible.netcommon.netconf_config:
-        target: running
+        target: candidate
+        test_option: test-then-set
+        error_option: rollback-on-error
         content: |
           <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-            
             <ifm xmlns="urn:huawei:yang:huawei-ifm">
               <interfaces>
                 <interface>
@@ -21,9 +43,7 @@
                   <parent-name>{{ p_interface }}</parent-name>
                   <description>{{ p_nvo_name }}-NVO ({{ p_username }})</description>
                   <l2-mode-enable>true</l2-mode-enable>
-                  
                   <statistic-enable>true</statistic-enable>
-                  
                   <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
                     <l2-sub-interface>
                       <qinqs>
@@ -34,7 +54,6 @@
                           </qinq-vid>
                         </qinq-vids>
                       </qinqs>
-                      
                       <flow-action>
                         <action-type>map-2-to-2</action-type>
                         <out-vlan-id>{{ p_nvo_s_vlan }}</out-vlan-id>
@@ -42,11 +61,9 @@
                       </flow-action>
                     </l2-sub-interface>
                   </ethernet>
-
                 </interface>
               </interfaces>
             </ifm>
-
             <bd xmlns="urn:huawei:yang:huawei-bd">
               <instances>
                 <instance>
@@ -59,10 +76,4 @@
                 </instance>
               </instances>
             </bd>
-
           </config>
-      register: l2_subint_result
-
-    - name: Mostra esito
-      debug:
-        var: l2_subint_result
