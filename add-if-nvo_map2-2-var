@@ -9,7 +9,7 @@
   tasks:
     - name: Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche e BD
       ansible.netcommon.netconf_config:
-        target: candidate
+        target: running
         content: |
           <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
             
