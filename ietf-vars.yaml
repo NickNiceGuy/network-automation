@@ -41,4 +41,4 @@
 
     - name: Show details for interface "{{ target_interface }}"
       debug:
-        msg: "{{ result.stdout_lines }}"
+        msg: "{{ result }}"
