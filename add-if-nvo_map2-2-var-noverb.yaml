@@ -1,0 +1,81 @@
+- name: Playbook per creazione Subinterface L2 QinQ e associazione BD
+  hosts: NE8000-F1A
+  connection: netconf
+  gather_facts: false
+
+  vars:
+    ansible_command_timeout: 90
+    ansible_connect_timeout: 90
+    ansible_netconf_persistent_connect_timeout: 5
+
+  tasks:
+
+    - block:
+
+        - name: Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche e BD
+          ansible.netcommon.netconf_config:
+            target: running
+            content: |
+              <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+
+                <ifm xmlns="urn:huawei:yang:huawei-ifm">
+                  <interfaces>
+                    <interface>
+                      <name>{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}</name>
+                      <parent-name>{{ p_interface }}</parent-name>
+                      <description>{{ p_nvo_name }}-NVO ({{ p_username }})</description>
+                      <l2-mode-enable>true</l2-mode-enable>
+                      <statistic-enable>true</statistic-enable>
+
+                      <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
+                        <l2-sub-interface>
+                          <qinqs>
+                            <qinq-vids>
+                              <qinq-vid>
+                                <pe-vlan-id>{{ p_svlan }}</pe-vlan-id>
+                                <ce-vlan-list>{{ p_cvlan }}</ce-vlan-list>
+                              </qinq-vid>
+                            </qinq-vids>
+                          </qinqs>
+
+                          <flow-action>
+                            <action-type>map-2-to-2</action-type>
+                            <out-vlan-id>{{ p_nvo_s_vlan }}</out-vlan-id>
+                            <inner-vlan-id>{{ p_nvo_c_vlan }}</inner-vlan-id>
+                          </flow-action>
+                        </l2-sub-interface>
+                      </ethernet>
+
+                    </interface>
+                  </interfaces>
+                </ifm>
+
+                <bd xmlns="urn:huawei:yang:huawei-bd">
+                  <instances>
+                    <instance>
+                      <id>{{ p_bridge }}</id>
+                      <service-points>
+                        <service-point>
+                          <interface-name>{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}</interface-name>
+                        </service-point>
+                      </service-points>
+                    </instance>
+                  </instances>
+                </bd>
+
+              </config>
+          register: l2_subint_result
+
+        - name: Esito operazione
+          debug:
+            msg:
+              status: SUCCESS
+              changed: "{{ l2_subint_result.changed }}"
+
+      rescue:
+
+        - name: Errore configurazione
+          debug:
+            msg:
+              status: FAILED
+              error: "{{ ansible_failed_result.msg | default('Errore sconosciuto') }}"
