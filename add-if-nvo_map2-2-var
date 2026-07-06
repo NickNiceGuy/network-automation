@@ -3,8 +3,8 @@
   connection: netconf
   gather_facts: no
   vars:
-    ansible_command_timeout: 30
-    ansible_connect_timeout: 30
+    ansible_command_timeout: 90
+    ansible_connect_timeout: 90
     ansible_netconf_persistent_connect_timeout: 5
 
   tasks:
