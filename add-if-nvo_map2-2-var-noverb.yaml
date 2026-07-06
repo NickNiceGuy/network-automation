@@ -11,26 +11,8 @@
   tasks:
 
     - block:
-        - name: 1. Controlla se la sottointerfaccia esiste già sul router
-        ansible.netcommon.netconf_get:
-          source: running
-          filter: |
-            <ifm xmlns="urn:huawei:yang:huawei-ifm">
-              <interfaces>
-                <interface>
-                  <name>{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}</name>
-                </interface>
-              </interfaces>
-            </ifm>
-        register: check_interface
-
-      - name: 2. Blocca l'esecuzione se l'interfaccia è già presente
-        fail:
-          msg: "ERRORE DI SICUREZZA: La sottointerfaccia esiste già sul router! Nessuna modifica applicata."
-        when: 
-          - check_interface.output is defined
         
-        - name: Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche e BD
+        - name: 3. Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche e BD
           ansible.netcommon.netconf_config:
             target: running
             content: |
