@@ -26,8 +26,8 @@
       ansible.builtin.fail:
         msg: "ERRORE: La subinterface {{ subif_name }} esiste gia sull'apparato!"
       when: 
-        - check_interface.output is defined
-        - "('<name>' + subif_name + '</name>') in check_interface.output"
+        - check_interface.output is not none
+        - check_interface.output | string is search('<name>' ~ subif_name ~ '</name>')
 
     - name: Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche e BD
       ansible.netcommon.netconf_config:
