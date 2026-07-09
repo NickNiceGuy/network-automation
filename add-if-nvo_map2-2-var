@@ -9,17 +9,15 @@
     subif_name: "{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}"
 
   tasks:
-    - name: Verifichiamo se la subinterface esiste gia
+    - name: Verifichiamo se la subinterface esiste gia (Uso Standard IETF)
       ansible.netcommon.netconf_get:
         source: running
         filter: |
-          <ifm xmlns="urn:huawei:yang:huawei-ifm">
-            <interfaces>
-              <interface>
-                <name>{{ subif_name }}</name>
-              </interface>
-            </interfaces>
-          </ifm>
+          <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+            <interface>
+              <name>{{ subif_name }}</name>
+            </interface>
+          </interfaces>
       register: check_interface
 
     - name: Blocco del Playbook se la subinterface esiste
@@ -27,7 +25,7 @@
         msg: "ERRORE: La subinterface {{ subif_name }} esiste gia sull'apparato!"
       when: 
         - check_interface.output is not none
-        - check_interface.output | string is search('<name>' ~ subif_name ~ '</name>')
+        - subif_name in check_interface.output
 
     - name: Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche e BD
       ansible.netcommon.netconf_config:
