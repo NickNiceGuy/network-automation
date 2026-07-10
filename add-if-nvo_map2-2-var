@@ -6,40 +6,24 @@
     ansible_command_timeout: 90
     ansible_connect_timeout: 90
     ansible_netconf_persistent_connect_timeout: 5
-    subif_name: "{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}"
 
   tasks:
-    - name: Verifichiamo se la subinterface esiste gia (Uso Standard IETF)
-      ansible.netcommon.netconf_get:
-        source: running
-        filter: |
-          <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
-            <interface>
-              <name>{{ subif_name }}</name>
-            </interface>
-          </interfaces>
-      register: check_interface
-
-    - name: Blocco del Playbook se la subinterface esiste
-      ansible.builtin.fail:
-        msg: "ERRORE: La subinterface {{ subif_name }} esiste gia sull'apparato!"
-      when: 
-        - check_interface.output is not none
-        - subif_name in check_interface.output
-
     - name: Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche e BD
       ansible.netcommon.netconf_config:
-        target: candidate
+        target: running
         content: |
           <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+            
             <ifm xmlns="urn:huawei:yang:huawei-ifm">
               <interfaces>
                 <interface>
-                  <name>{{ subif_name }}</name>
+                  <name>{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}</name>
                   <parent-name>{{ p_interface }}</parent-name>
                   <description>{{ p_nvo_name }}-NVO ({{ p_username }})</description>
                   <l2-mode-enable>true</l2-mode-enable>
+                  
                   <statistic-enable>true</statistic-enable>
+                  
                   <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
                     <l2-sub-interface>
                       <qinqs>
@@ -50,6 +34,7 @@
                           </qinq-vid>
                         </qinq-vids>
                       </qinqs>
+                      
                       <flow-action>
                         <action-type>map-2-to-2</action-type>
                         <out-vlan-id>{{ p_nvo_s_vlan }}</out-vlan-id>
@@ -57,21 +42,24 @@
                       </flow-action>
                     </l2-sub-interface>
                   </ethernet>
+
                 </interface>
               </interfaces>
             </ifm>
+
             <bd xmlns="urn:huawei:yang:huawei-bd">
               <instances>
                 <instance>
                   <id>{{ p_bridge }}</id>
                   <service-points>
                     <service-point>
-                      <interface-name>{{ subif_name }}</interface-name>
+                      <interface-name>{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}</interface-name>
                     </service-point>
                   </service-points>
                 </instance>
               </instances>
             </bd>
+
           </config>
       register: l2_subint_result
 
