@@ -14,6 +14,8 @@
         ansible_user: netconf
         ansible_port: 830
         ansible_password: "{{ target_password }}"
+        ansible_connection=ansible.netcommon.netconf
+        ansible_network_os=ansible.netcommon.default
 
 - hosts: "{{ target_host }}"
   tasks:
