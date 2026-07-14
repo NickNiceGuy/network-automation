@@ -1,11 +1,5 @@
 - name: Playbook per creazione Subinterface L2 Dot1q e associazione BD (con pre-check)
   hosts: localhost
-  connection: netconf
-  gather_facts: no
-  vars:
-    ansible_command_timeout: 180
-    ansible_connect_timeout: 180
-    subif_name: "{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}"
 
   tasks:
     - add_host:
@@ -14,10 +8,15 @@
         ansible_user: netconf
         ansible_port: 830
         ansible_password: "{{ target_password }}"
-        ansible_connection: ansible.netcommon.netconf
-        ansible_network_os: ansible.netcommon.default
 
 - hosts: "{{ target_host }}"
+  connection: netconf
+  gather_facts: no
+  vars:
+    ansible_command_timeout: 180
+    ansible_connect_timeout: 180
+    subif_name: "{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}"
+    
   tasks:
 
     - name: Verifica se la subinterface esiste già
