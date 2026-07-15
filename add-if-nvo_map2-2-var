@@ -1,5 +1,5 @@
 - name: Playbook per creazione Subinterface L2 QinQ e associazione BD (con pre-check)
-  hosts: NE8000-F1A
+  hosts: NE8000-M1C
   connection: netconf
   gather_facts: no
   vars:
