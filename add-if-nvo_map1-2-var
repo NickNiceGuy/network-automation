@@ -1,91 +1,98 @@
 - name: Playbook per creazione Subinterface L2 Dot1q e associazione BD (con pre-check)
-  hosts: NE8000-F1A
+  hosts: all
   connection: netconf
   gather_facts: no
   vars:
-    ansible_command_timeout: 180
-    ansible_connect_timeout: 180
+    ansible_command_timeout: 120
+    ansible_connect_timeout: 120
+    ansible_netconf_persistent_connect_timeout: 5
     subif_name: "{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}"
 
   tasks:
+    - block:
+        - name: Verifica se la subinterface esiste già
+          ansible.netcommon.netconf_get:
+            source: running
+            filter: |
+              <ifm xmlns="urn:huawei:yang:huawei-ifm">
+                <interfaces>
+                  <interface>
+                    <name>{{ subif_name }}</name>
+                  </interface>
+                </interfaces>
+              </ifm>
+            display: xml
+          register: existing_subif
 
-    - name: Verifica se la subinterface esiste già
-      ansible.netcommon.netconf_get:
-        source: running
-        filter: |
-          <ifm xmlns="urn:huawei:yang:huawei-ifm">
-            <interfaces>
-              <interface>
-                <name>{{ subif_name }}</name>
-              </interface>
-            </interfaces>
-          </ifm>
-        display: xml
-      register: existing_subif
+        - name: Imposta flag di esistenza della subinterface
+          set_fact:
+            subif_exists: "{{ ('<name>' ~ subif_name ~ '</name>') in (existing_subif.stdout | default('')) }}"
 
-    - name: Imposta flag di esistenza della subinterface
-      set_fact:
-        subif_exists: "{{ ('<name>' ~ subif_name ~ '</name>') in (existing_subif.stdout | default('')) }}"
+        - name: Subinterface già presente – nessuna azione
+          debug:
+            msg: "La subinterface {{ subif_name }} esiste già su {{ inventory_hostname }}: creazione saltata."
+          when: subif_exists
 
-    - name: Subinterface già presente – nessuna azione
-      debug:
-        msg: "La subinterface {{ subif_name }} esiste già su {{ inventory_hostname }}: creazione saltata."
-      when: subif_exists
+        - name: Configura subinterface L2 con Dot1q, Flow Action 1-2, Statistiche e BD
+          when: not subif_exists
+          ansible.netcommon.netconf_config:
+            target: candidate
+            content: |
+              <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+                <ifm xmlns="urn:huawei:yang:huawei-ifm">
+                  <interfaces>
+                    <interface>
+                      <name>{{ subif_name }}</name>
+                      <parent-name>{{ p_interface }}</parent-name>
+                      <description>{{ p_nvo_name }}-NVO ({{ p_username }})</description>
+                      <l2-mode-enable>true</l2-mode-enable>
+                      <statistic-enable>true</statistic-enable>
+                      <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
+                        <l2-sub-interface>
+                          <dot1q>
+                            <vlans>
+                              <vlan-list>{{ p_cvlan }}</vlan-list>
+                            </vlans>
+                          </dot1q>
+                          <flow-action>
+                            <action-type>map-1-to-2</action-type>
+                            <out-vlan-id>{{ p_nvo_s_vlan }}</out-vlan-id>
+                            <inner-vlan-id>{{ p_nvo_c_vlan }}</inner-vlan-id>
+                          </flow-action>
+                        </l2-sub-interface>
+                      </ethernet>
+                    </interface>
+                  </interfaces>
+                </ifm>
+                <bd xmlns="urn:huawei:yang:huawei-bd">
+                  <instances>
+                    <instance>
+                      <id>{{ p_bridge }}</id>
+                      <service-points>
+                        <service-point>
+                          <interface-name>{{ subif_name }}</interface-name>
+                        </service-point>
+                      </service-points>
+                    </instance>
+                  </instances>
+                </bd>
+              </config>
+          register: l2_subint_result
 
-    - name: Configura subinterface L2 con Dot1q, Flow Action 1-2, Statistiche e BD
-      when: not subif_exists
-      ansible.netcommon.netconf_config:
-        target: candidate
-        content: |
-          <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+        - name: Mostra esito creazione
+          when: not subif_exists
+          debug:
+            msg:
+              status: SUCCESS
+              changed: "{{ l2_subint_result.changed | default(false) }}"
 
-            <ifm xmlns="urn:huawei:yang:huawei-ifm">
-              <interfaces>
-                <interface>
-                  <name>{{ subif_name }}</name>
-                  <parent-name>{{ p_interface }}</parent-name>
-                  <description>{{ p_nvo_name }}-NVO ({{ p_username }})</description>
-                  <l2-mode-enable>true</l2-mode-enable>
+      rescue:
+        - name: Errore configurazione
+          debug:
+            msg:
+              status: FAILED
+              error: "{{ ansible_failed_result.msg | default('Errore sconosciuto') }}"
 
-                  <statistic-enable>true</statistic-enable>
-
-                  <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
-                    <l2-sub-interface>
-                      <dot1q>
-                        <vlans>
-                          <vlan-list>{{ p_cvlan }}</vlan-list>
-                        </vlans>
-                      </dot1q>
-
-                      <flow-action>
-                        <action-type>map-1-to-2</action-type>
-                        <out-vlan-id>{{ p_nvo_s_vlan }}</out-vlan-id>
-                        <inner-vlan-id>{{ p_nvo_c_vlan }}</inner-vlan-id>
-                      </flow-action>
-                    </l2-sub-interface>
-                  </ethernet>
-
-                </interface>
-              </interfaces>
-            </ifm>
-
-            <bd xmlns="urn:huawei:yang:huawei-bd">
-              <instances>
-                <instance>
-                  <id>{{ p_bridge }}</id>
-                  <service-points>
-                    <service-point>
-                      <interface-name>{{ subif_name }}</interface-name>
-                    </service-point>
-                  </service-points>
-                </instance>
-              </instances>
-            </bd>
-
-          </config>
-      register: l2_subint_result
-
-    - name: Mostra esito creazione
-      debug:
-        var: l2_subint_result
-      when: not subif_exists
+      always:
+        - name: Chiudi la connessione persistente NETCONF
+          meta: reset_connection
