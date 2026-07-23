@@ -1,32 +1,53 @@
-- name: Playbook per creazione Subinterface L2 QinQ e associazione BD
+- name: Playbook per creazione Subinterface L2 QinQ e associazione BD (con pre-check)
   hosts: all
   connection: netconf
   gather_facts: false
-
   vars:
-    ansible_command_timeout: 90
-    ansible_connect_timeout: 90
+    ansible_command_timeout: 120
+    ansible_connect_timeout: 120
     ansible_netconf_persistent_connect_timeout: 5
+    subif_name: "{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}"
 
   tasks:
-
     - block:
-        
-        - name: 3. Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche e BD
+        - name: Verifica se la subinterface esiste già
+          ansible.netcommon.netconf_get:
+            source: running
+            filter: |
+              <ifm xmlns="urn:huawei:yang:huawei-ifm">
+                <interfaces>
+                  <interface>
+                    <name>{{ subif_name }}</name>
+                  </interface>
+                </interfaces>
+              </ifm>
+            display: xml
+          register: existing_subif
+          no_log: true
+
+        - name: Imposta flag di esistenza della subinterface
+          set_fact:
+            subif_exists: "{{ ('<name>' ~ subif_name ~ '</name>') in (existing_subif.stdout | default('')) }}"
+
+        - name: Subinterface già presente – nessuna azione
+          debug:
+            msg: "La subinterface {{ subif_name }} esiste già su {{ inventory_hostname }}: creazione saltata."
+          when: subif_exists
+
+        - name: Configura subinterface L2 con QinQ, Flow Action 2-2, Statistiche e BD
+          when: not subif_exists
           ansible.netcommon.netconf_config:
-            target: running
+            target: candidate
             content: |
               <config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
-
                 <ifm xmlns="urn:huawei:yang:huawei-ifm">
                   <interfaces>
                     <interface>
-                      <name>{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}</name>
+                      <name>{{ subif_name }}</name>
                       <parent-name>{{ p_interface }}</parent-name>
                       <description>{{ p_nvo_name }}-NVO ({{ p_username }})</description>
                       <l2-mode-enable>true</l2-mode-enable>
                       <statistic-enable>true</statistic-enable>
-
                       <ethernet xmlns="urn:huawei:yang:huawei-ethernet">
                         <l2-sub-interface>
                           <qinqs>
@@ -37,7 +58,6 @@
                               </qinq-vid>
                             </qinq-vids>
                           </qinqs>
-
                           <flow-action>
                             <action-type>map-2-to-2</action-type>
                             <out-vlan-id>{{ p_nvo_s_vlan }}</out-vlan-id>
@@ -45,37 +65,38 @@
                           </flow-action>
                         </l2-sub-interface>
                       </ethernet>
-
                     </interface>
                   </interfaces>
                 </ifm>
-
                 <bd xmlns="urn:huawei:yang:huawei-bd">
                   <instances>
                     <instance>
                       <id>{{ p_bridge }}</id>
                       <service-points>
                         <service-point>
-                          <interface-name>{{ p_interface }}.{{ p_nvo_s_vlan }}{{ p_nvo_c_vlan }}</interface-name>
+                          <interface-name>{{ subif_name }}</interface-name>
                         </service-point>
                       </service-points>
                     </instance>
                   </instances>
                 </bd>
-
               </config>
           register: l2_subint_result
 
         - name: Esito operazione
+          when: not subif_exists
           debug:
             msg:
               status: SUCCESS
-              changed: "{{ l2_subint_result.changed }}"
+              changed: "{{ l2_subint_result.changed | default(false) }}"
 
       rescue:
-
         - name: Errore configurazione
           debug:
             msg:
               status: FAILED
               error: "{{ ansible_failed_result.msg | default('Errore sconosciuto') }}"
+
+      always:
+        - name: Chiudi la connessione persistente NETCONF
+          meta: reset_connection
